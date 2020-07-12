@@ -45,7 +45,6 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 				World world = decayTask.getWorld();
 				BlockPos pos = decayTask.getPos();
 				calculateDistances( state, pos, world );
-				System.out.println( world.getBlockState( pos ).get( LeavesBlock.DISTANCE ) );
 				world.getBlockState( pos ).randomTick( world, pos, world.getRandom() );
 			}
 		}

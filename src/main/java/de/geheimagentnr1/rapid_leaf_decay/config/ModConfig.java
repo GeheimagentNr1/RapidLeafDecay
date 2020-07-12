@@ -14,13 +14,13 @@ public class ModConfig {
 	
 	private final static Logger LOGGER = LogManager.getLogger();
 	
-	public final static String mod_name = "Rapid Leaf Decay";
+	private final static String mod_name = "Rapid Leaf Decay";
 	
 	private final static ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 	
 	private final static ForgeConfigSpec CONFIG;
 	
-	public final static ForgeConfigSpec.IntValue DECAY_DELAY;
+	private final static ForgeConfigSpec.IntValue DECAY_DELAY;
 	
 	static {
 		
