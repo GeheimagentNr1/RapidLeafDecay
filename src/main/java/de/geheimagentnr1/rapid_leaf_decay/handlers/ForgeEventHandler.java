@@ -6,6 +6,7 @@ import de.geheimagentnr1.rapid_leaf_decay.decayer.DecayTask;
 import de.geheimagentnr1.rapid_leaf_decay.decayer.DecayWorker;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.LeavesBlock;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -44,7 +45,8 @@ public class ForgeEventHandler {
 			for( Direction direction : directions ) {
 				BlockPos directionPos = pos.offset( direction );
 				BlockState directionState = world.getBlockState( directionPos );
-				if( BlockTags.LEAVES.contains( directionState.getBlock() ) ) {
+				if( BlockTags.LEAVES.contains( directionState.getBlock() ) &&
+					!directionState.get( LeavesBlock.PERSISTENT ) ) {
 					DecayQueue.add( new DecayTask( world.getWorld(), directionState, directionPos ) );
 				}
 			}

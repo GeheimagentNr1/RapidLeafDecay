@@ -11,6 +11,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.WorldWorkerManager;
 
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 
 public class DecayWorker implements WorldWorkerManager.IWorker {
@@ -44,6 +45,7 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 				World world = decayTask.getWorld();
 				BlockPos pos = decayTask.getPos();
 				calculateDistances( state, pos, world );
+				System.out.println( world.getBlockState( pos ).get( LeavesBlock.DISTANCE ) );
 				world.getBlockState( pos ).randomTick( world, pos, world.getRandom() );
 			}
 		}
@@ -56,6 +58,8 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 		blockStates.add( start_state );
 		ArrayList<BlockPos> blockPoses = new ArrayList<>();
 		blockPoses.add( start_pos );
+		TreeSet<BlockPos> poses = new TreeSet<>();
+		poses.add( start_pos );
 		
 		while( !blockStates.isEmpty() ) {
 			BlockState current_blockState = blockStates.get( 0 );
@@ -65,15 +69,19 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 					BlockPos directionPos = current_blockPos.offset( direction );
 					if( world.isBlockPresent( directionPos ) ) {
 						BlockState directionBlockState = world.getBlockState( directionPos );
-						if( BlockTags.LEAVES.contains( directionBlockState.getBlock() ) ) {
+						if( BlockTags.LEAVES.contains( directionBlockState.getBlock() ) &&
+							!directionBlockState.get( LeavesBlock.PERSISTENT ) &&
+							!poses.contains( directionPos ) ) {
 							blockStates.add( directionBlockState );
 							blockPoses.add( directionPos );
+							poses.add( directionPos );
 						}
 					}
 				}
 			}
 			blockStates.remove( 0 );
 			blockPoses.remove( 0 );
+			poses.remove( current_blockPos );
 		}
 	}
 	
