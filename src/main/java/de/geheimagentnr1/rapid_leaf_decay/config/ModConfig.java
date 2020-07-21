@@ -12,15 +12,15 @@ import org.apache.logging.log4j.Logger;
 public class ModConfig {
 	
 	
-	private final static Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = LogManager.getLogger();
 	
-	private final static String mod_name = "Rapid Leaf Decay";
+	private static final String mod_name = "Rapid Leaf Decay";
 	
-	private final static ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
+	private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 	
-	private final static ForgeConfigSpec CONFIG;
+	private static final ForgeConfigSpec CONFIG;
 	
-	private final static ForgeConfigSpec.IntValue DECAY_DELAY;
+	private static final ForgeConfigSpec.IntValue DECAY_DELAY;
 	
 	static {
 		

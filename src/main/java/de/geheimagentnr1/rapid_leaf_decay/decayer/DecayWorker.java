@@ -48,7 +48,7 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 				world.getBlockState( pos ).randomTick( world, pos, world.getRandom() );
 			}
 		}
-		return ModConfig.getDecayDelay() == 0 && DecayQueue.notEmpty();
+		return ModConfig.getDecayDelay() == 0 && DecayQueue.isNotEmpty();
 	}
 	
 	private void calculateDistances( BlockState start_state, BlockPos start_pos, World world ) {

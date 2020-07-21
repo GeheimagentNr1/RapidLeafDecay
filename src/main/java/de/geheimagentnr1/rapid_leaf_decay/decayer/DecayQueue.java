@@ -27,7 +27,7 @@ public class DecayQueue {
 		return resultDecayTasks;
 	}
 	
-	public static boolean notEmpty() {
+	public static boolean isNotEmpty() {
 		
 		return !decayTasks.isEmpty();
 	}

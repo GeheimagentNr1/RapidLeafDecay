@@ -4,7 +4,6 @@ import de.geheimagentnr1.rapid_leaf_decay.config.ModConfig;
 import de.geheimagentnr1.rapid_leaf_decay.decayer.DecayQueue;
 import de.geheimagentnr1.rapid_leaf_decay.decayer.DecayTask;
 import de.geheimagentnr1.rapid_leaf_decay.decayer.DecayWorker;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.tags.BlockTags;
@@ -39,7 +38,6 @@ public class ForgeEventHandler {
 		IWorld world = event.getWorld();
 		BlockPos pos = event.getPos();
 		BlockState state = world.getBlockState( pos );
-		Block block = state.getBlock();
 		if( state.isAir( world, pos ) ) {
 			EnumSet<Direction> directions = event.getNotifiedSides();
 			for( Direction direction : directions ) {
