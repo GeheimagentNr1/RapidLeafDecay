@@ -103,7 +103,7 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 		return false;
 	}
 	
-	private static int getDistance( BlockState neighbor ) {
+	private int getDistance( BlockState neighbor ) {
 		
 		if( BlockTags.LOGS.contains( neighbor.getBlock() ) ) {
 			return 0;
