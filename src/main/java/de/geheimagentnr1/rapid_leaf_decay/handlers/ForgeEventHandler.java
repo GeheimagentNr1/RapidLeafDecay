@@ -10,6 +10,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.WorldWorkerManager;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -38,14 +39,15 @@ public class ForgeEventHandler {
 		IWorld world = event.getWorld();
 		BlockPos pos = event.getPos();
 		BlockState state = world.getBlockState( pos );
-		if( state.isAir( world, pos ) ) {
+		if( world instanceof ServerWorld && state.isAir( world, pos ) ) {
+			ServerWorld serverWorld = (ServerWorld)world;
 			EnumSet<Direction> directions = event.getNotifiedSides();
 			for( Direction direction : directions ) {
 				BlockPos directionPos = pos.offset( direction );
 				BlockState directionState = world.getBlockState( directionPos );
 				if( BlockTags.LEAVES.contains( directionState.getBlock() ) &&
 					!directionState.get( LeavesBlock.PERSISTENT ) ) {
-					DecayQueue.add( new DecayTask( world.getWorld(), directionState, directionPos ) );
+					DecayQueue.add( new DecayTask( serverWorld, directionState, directionPos ) );
 				}
 			}
 		}

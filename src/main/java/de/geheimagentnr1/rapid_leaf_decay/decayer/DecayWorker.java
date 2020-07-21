@@ -7,7 +7,7 @@ import net.minecraft.block.LeavesBlock;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.WorldWorkerManager;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 			BlockState state = decayTask.getState();
 			Block block = state.getBlock();
 			if( BlockTags.LEAVES.contains( block ) ) {
-				World world = decayTask.getWorld();
+				ServerWorld world = decayTask.getWorld();
 				BlockPos pos = decayTask.getPos();
 				calculateDistances( state, pos, world );
 				world.getBlockState( pos ).randomTick( world, pos, world.getRandom() );
@@ -51,7 +51,7 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 		return ModConfig.getDecayDelay() == 0 && DecayQueue.isNotEmpty();
 	}
 	
-	private void calculateDistances( BlockState start_state, BlockPos start_pos, World world ) {
+	private void calculateDistances( BlockState start_state, BlockPos start_pos, ServerWorld world ) {
 		
 		ArrayList<BlockState> blockStates = new ArrayList<>();
 		blockStates.add( start_state );
@@ -84,7 +84,7 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 		}
 	}
 	
-	private boolean calculateDistance( BlockState state, BlockPos pos, World world ) {
+	private boolean calculateDistance( BlockState state, BlockPos pos, ServerWorld world ) {
 		
 		int old_distance = state.get( LeavesBlock.DISTANCE );
 		int distance = 7;
