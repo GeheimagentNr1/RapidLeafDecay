@@ -45,7 +45,7 @@ public class ForgeEventHandler {
 			for( Direction direction : directions ) {
 				BlockPos directionPos = pos.offset( direction );
 				BlockState directionState = world.getBlockState( directionPos );
-				if( BlockTags.LEAVES.contains( directionState.getBlock() ) &&
+				if( BlockTags.LEAVES.func_230235_a_( directionState.getBlock() ) &&
 					!directionState.get( LeavesBlock.PERSISTENT ) ) {
 					DecayQueue.add( new DecayTask( serverWorld, directionState, directionPos ) );
 				}
