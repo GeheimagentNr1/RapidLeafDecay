@@ -44,8 +44,10 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 			if( BlockTags.LEAVES.contains( block ) ) {
 				World world = decayTask.getWorld();
 				BlockPos pos = decayTask.getPos();
-				calculateDistances( state, pos, world );
-				world.getBlockState( pos ).randomTick( world, pos, world.getRandom() );
+				if( world.isBlockPresent( pos ) ) {
+					calculateDistances( state, pos, world );
+					world.getBlockState( pos ).randomTick( world, pos, world.getRandom() );
+				}
 			}
 		}
 		return ModConfig.getDecayDelay() == 0 && DecayQueue.isNotEmpty();
@@ -63,20 +65,24 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 		while( !blockStates.isEmpty() ) {
 			BlockState current_blockState = blockStates.get( 0 );
 			BlockPos current_blockPos = blockPoses.get( 0 );
-			if( calculateDistance( current_blockState, current_blockPos, world ) ) {
-				for( Direction direction : Direction.values() ) {
-					BlockPos directionPos = current_blockPos.offset( direction );
-					if( world.isBlockPresent( directionPos ) ) {
-						BlockState directionBlockState = world.getBlockState( directionPos );
-						if( BlockTags.LEAVES.contains( directionBlockState.getBlock() ) &&
-							!directionBlockState.get( LeavesBlock.PERSISTENT ) &&
-							!poses.contains( directionPos ) ) {
-							blockStates.add( directionBlockState );
-							blockPoses.add( directionPos );
-							poses.add( directionPos );
-						}
+			ArrayList<BlockState> directionBlockStates = new ArrayList<>();
+			ArrayList<BlockPos> directionBlockPoses = new ArrayList<>();
+			for( Direction direction : Direction.values() ) {
+				BlockPos directionPos = current_blockPos.offset( direction );
+				if( world.isBlockPresent( directionPos ) ) {
+					BlockState directionBlockState = world.getBlockState( directionPos );
+					if( BlockTags.LEAVES.contains( directionBlockState.getBlock() ) &&
+						!directionBlockState.get( LeavesBlock.PERSISTENT ) &&
+						!poses.contains( directionPos ) ) {
+						directionBlockStates.add( directionBlockState );
+						directionBlockPoses.add( directionPos );
 					}
 				}
+			}
+			if( calculateDistance( current_blockState, current_blockPos, world ) ) {
+				blockStates.addAll( directionBlockStates );
+				blockPoses.addAll( directionBlockPoses );
+				poses.addAll( directionBlockPoses );
 			}
 			blockStates.remove( 0 );
 			blockPoses.remove( 0 );
