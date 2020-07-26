@@ -20,14 +20,16 @@ public class DecayQueue {
 		decayTasks.add( decayTask );
 	}
 	
-	public static TreeSet<DecayTask> getElementsAndReset() {
+	//package-private
+	static TreeSet<DecayTask> getElementsAndReset() {
 		
 		TreeSet<DecayTask> resultDecayTasks = decayTasks;
 		init();
 		return resultDecayTasks;
 	}
 	
-	public static boolean isNotEmpty() {
+	//package-private
+	static boolean isNotEmpty() {
 		
 		return !decayTasks.isEmpty();
 	}
