@@ -21,17 +21,20 @@ public class DecayTask {
 		pos = _pos;
 	}
 	
-	public World getWorld() {
+	//package-private
+	World getWorld() {
 		
 		return world;
 	}
 	
-	public BlockState getState() {
+	//package-private
+	BlockState getState() {
 		
 		return state;
 	}
 	
-	public BlockPos getPos() {
+	//package-private
+	BlockPos getPos() {
 		
 		return pos;
 	}
