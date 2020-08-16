@@ -1,6 +1,5 @@
 package de.geheimagentnr1.rapid_leaf_decay.handlers;
 
-import de.geheimagentnr1.rapid_leaf_decay.config.ModConfig;
 import de.geheimagentnr1.rapid_leaf_decay.decayer.DecayQueue;
 import de.geheimagentnr1.rapid_leaf_decay.decayer.DecayTask;
 import de.geheimagentnr1.rapid_leaf_decay.decayer.DecayWorker;
@@ -28,7 +27,6 @@ public class ForgeEventHandler {
 	@SubscribeEvent
 	public static void handlerServerStartingEvent( FMLServerStartingEvent event ) {
 		
-		ModConfig.load();
 		DecayQueue.init();
 		WorldWorkerManager.addWorker( new DecayWorker() );
 	}
