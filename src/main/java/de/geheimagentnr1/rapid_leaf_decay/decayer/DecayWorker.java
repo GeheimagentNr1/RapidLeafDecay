@@ -1,6 +1,6 @@
 package de.geheimagentnr1.rapid_leaf_decay.decayer;
 
-import de.geheimagentnr1.rapid_leaf_decay.config.ModConfig;
+import de.geheimagentnr1.rapid_leaf_decay.config.MainConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
@@ -34,7 +34,7 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 	public boolean doWork() {
 		
 		tickCount++;
-		if( tickCount < ModConfig.getDecayDelay() ) {
+		if( tickCount < MainConfig.getDecayDelay() ) {
 			return false;
 		}
 		tickCount = 0;
@@ -50,7 +50,7 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 				}
 			}
 		}
-		return ModConfig.getDecayDelay() == 0 && DecayQueue.isNotEmpty();
+		return MainConfig.getDecayDelay() == 0 && DecayQueue.isNotEmpty();
 	}
 	
 	private void calculateDistances( BlockState start_state, BlockPos start_pos, ServerWorld world ) {
