@@ -12,7 +12,7 @@ public class DecayQueue {
 	public static void init() {
 		
 		decayTasks = new TreeSet<>( Comparator.comparing( ( DecayTask o ) -> o.getWorld().func_234923_W_() )
-				.thenComparing( DecayTask::getPos ) );
+			.thenComparing( DecayTask::getPos ) );
 	}
 	
 	public static void add( DecayTask decayTask ) {
