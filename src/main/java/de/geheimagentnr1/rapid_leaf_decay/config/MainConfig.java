@@ -1,15 +1,11 @@
 package de.geheimagentnr1.rapid_leaf_decay.config;
 
-import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import com.electronwill.nightconfig.core.io.WritingMode;
-import de.geheimagentnr1.rapid_leaf_decay.RapidLeafDecay;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-public class ModConfig {
+public class MainConfig {
 	
 	
 	private static final Logger LOGGER = LogManager.getLogger();
@@ -18,7 +14,7 @@ public class ModConfig {
 	
 	private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 	
-	private static final ForgeConfigSpec CONFIG;
+	public static final ForgeConfigSpec CONFIG;
 	
 	private static final ForgeConfigSpec.IntValue DECAY_DELAY;
 	
@@ -30,14 +26,9 @@ public class ModConfig {
 		CONFIG = BUILDER.build();
 	}
 	
-	public static void load() {
-		
-		CommentedFileConfig configData = CommentedFileConfig.builder( FMLPaths.CONFIGDIR.get().resolve(
-			RapidLeafDecay.MODID + ".toml" ) ).sync().autosave().writingMode( WritingMode.REPLACE ).build();
+	public static void printConfig() {
 		
 		LOGGER.info( "Loading \"{}\" Config", mod_name );
-		configData.load();
-		CONFIG.setConfig( configData );
 		LOGGER.info( "{} = {}", DECAY_DELAY.getPath(), DECAY_DELAY.get() );
 		LOGGER.info( "\"{}\" Config loaded", mod_name );
 	}
