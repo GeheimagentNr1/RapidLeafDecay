@@ -41,7 +41,7 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 		for( DecayTask decayTask : DecayQueue.getElementsAndReset() ) {
 			BlockState state = decayTask.getState();
 			Block block = state.getBlock();
-			if( BlockTags.LEAVES.func_230235_a_( block ) ) {
+			if( BlockTags.LEAVES.contains( block ) ) {
 				ServerWorld world = decayTask.getWorld();
 				BlockPos pos = decayTask.getPos();
 				if( world.isBlockPresent( pos ) ) {
@@ -71,7 +71,7 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 				BlockPos directionPos = current_blockPos.offset( direction );
 				if( world.isBlockPresent( directionPos ) ) {
 					BlockState directionBlockState = world.getBlockState( directionPos );
-					if( BlockTags.LEAVES.func_230235_a_( directionBlockState.getBlock() ) &&
+					if( BlockTags.LEAVES.contains( directionBlockState.getBlock() ) &&
 						!directionBlockState.get( LeavesBlock.PERSISTENT ) &&
 						!poses.contains( directionPos ) ) {
 						directionBlockStates.add( directionBlockState );
@@ -111,7 +111,7 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 	
 	private int getDistance( BlockState neighbor ) {
 		
-		if( BlockTags.LOGS.func_230235_a_( neighbor.getBlock() ) ) {
+		if( BlockTags.LOGS.contains( neighbor.getBlock() ) ) {
 			return 0;
 		} else {
 			return neighbor.getBlock() instanceof LeavesBlock ? neighbor.get( LeavesBlock.DISTANCE ) : 7;
