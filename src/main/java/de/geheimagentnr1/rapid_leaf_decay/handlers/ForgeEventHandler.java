@@ -37,7 +37,7 @@ public class ForgeEventHandler {
 		IWorld world = event.getWorld();
 		BlockPos pos = event.getPos();
 		BlockState state = world.getBlockState( pos );
-		if( world instanceof ServerWorld && state.isAir( world, pos ) ) {
+		if( world instanceof ServerWorld && state.getBlock().isAir( state, world, pos ) ) {
 			ServerWorld serverWorld = (ServerWorld)world;
 			EnumSet<Direction> directions = event.getNotifiedSides();
 			for( Direction direction : directions ) {
