@@ -32,7 +32,6 @@ public class ForgeEventHandler {
 		
 		IWorld world = event.getWorld();
 		BlockPos pos = event.getPos();
-		BlockState state = world.getBlockState( pos );
 		if( world instanceof ServerWorld && world.isAirBlock( pos ) ) {
 			ServerWorld serverWorld = (ServerWorld)world;
 			for( Direction direction : event.getNotifiedSides() ) {
