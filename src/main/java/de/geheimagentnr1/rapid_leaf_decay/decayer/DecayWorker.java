@@ -1,9 +1,8 @@
 package de.geheimagentnr1.rapid_leaf_decay.decayer;
 
-import de.geheimagentnr1.rapid_leaf_decay.config.MainConfig;
-import net.minecraft.block.Block;
+import de.geheimagentnr1.rapid_leaf_decay.config.ServerConfig;
+import de.geheimagentnr1.rapid_leaf_decay.helpers.LeavesHelper;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.LeavesBlock;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -34,14 +33,13 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 	public boolean doWork() {
 		
 		tickCount++;
-		if( tickCount < MainConfig.getDecayDelay() ) {
+		if( tickCount < ServerConfig.getDecayDelay() ) {
 			return false;
 		}
 		tickCount = 0;
 		for( DecayTask decayTask : DecayQueue.getElementsAndReset() ) {
 			BlockState state = decayTask.getState();
-			Block block = state.getBlock();
-			if( BlockTags.LEAVES.contains( block ) ) {
+			if( LeavesHelper.isValidDecayingLeaf( state ) ) {
 				ServerWorld world = decayTask.getWorld();
 				BlockPos pos = decayTask.getPos();
 				if( world.isBlockPresent( pos ) ) {
@@ -50,71 +48,83 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 				}
 			}
 		}
-		return MainConfig.getDecayDelay() == 0 && DecayQueue.isNotEmpty();
+		return ServerConfig.getDecayDelay() == 0 && DecayQueue.isNotEmpty();
 	}
 	
 	private void calculateDistances( BlockState start_state, BlockPos start_pos, ServerWorld world ) {
 		
-		ArrayList<BlockState> blockStates = new ArrayList<>();
-		blockStates.add( start_state );
-		ArrayList<BlockPos> blockPoses = new ArrayList<>();
-		blockPoses.add( start_pos );
-		TreeSet<BlockPos> poses = new TreeSet<>();
-		poses.add( start_pos );
+		ArrayList<BlockState> toCalculateStates = new ArrayList<>();
+		ArrayList<BlockPos> toCalculatePoses = new ArrayList<>();
+		TreeSet<BlockPos> inQueuePoses = new TreeSet<>();
+		toCalculateStates.add( start_state );
+		toCalculatePoses.add( start_pos );
+		inQueuePoses.add( start_pos );
 		
-		while( !blockStates.isEmpty() ) {
-			BlockState current_blockState = blockStates.get( 0 );
-			BlockPos current_blockPos = blockPoses.get( 0 );
-			ArrayList<BlockState> directionBlockStates = new ArrayList<>();
-			ArrayList<BlockPos> directionBlockPoses = new ArrayList<>();
+		while( !toCalculateStates.isEmpty() ) {
+			
+			BlockState toCalculateState = toCalculateStates.get( 0 );
+			BlockPos toCalculatePos = toCalculatePoses.get( 0 );
+			ArrayList<BlockState> directionStates = new ArrayList<>();
+			ArrayList<BlockPos> directionPoses = new ArrayList<>();
+			
 			for( Direction direction : Direction.values() ) {
-				BlockPos directionPos = current_blockPos.offset( direction );
+				
+				BlockPos directionPos = toCalculatePos.offset( direction );
+				
 				if( world.isBlockPresent( directionPos ) ) {
-					BlockState directionBlockState = world.getBlockState( directionPos );
-					if( BlockTags.LEAVES.contains( directionBlockState.getBlock() ) &&
-						!directionBlockState.get( LeavesBlock.PERSISTENT ) &&
-						!poses.contains( directionPos ) ) {
-						directionBlockStates.add( directionBlockState );
-						directionBlockPoses.add( directionPos );
+					
+					BlockState directionState = world.getBlockState( directionPos );
+					
+					if( LeavesHelper.isValidDecayingLeaf( directionState ) &&
+						LeavesHelper.isNotPersistent( directionState ) &&
+						!inQueuePoses.contains( directionPos ) ) {
+						
+						directionStates.add( directionState );
+						directionPoses.add( directionPos );
 					}
 				}
 			}
-			if( calculateDistance( current_blockState, current_blockPos, world ) ) {
-				blockStates.addAll( directionBlockStates );
-				blockPoses.addAll( directionBlockPoses );
-				poses.addAll( directionBlockPoses );
+			
+			if( calculateDistance( toCalculateState, toCalculatePos, world ) ) {
+				
+				toCalculateStates.addAll( directionStates );
+				toCalculatePoses.addAll( directionPoses );
+				inQueuePoses.addAll( directionPoses );
 			}
-			blockStates.remove( 0 );
-			blockPoses.remove( 0 );
-			poses.remove( current_blockPos );
+			
+			toCalculateStates.remove( 0 );
+			toCalculatePoses.remove( 0 );
+			inQueuePoses.remove( toCalculatePos );
 		}
 	}
 	
-	private boolean calculateDistance( BlockState state, BlockPos pos, ServerWorld world ) {
+	private boolean calculateDistance( BlockState queueState, BlockPos pos, ServerWorld world ) {
 		
-		int old_distance = state.get( LeavesBlock.DISTANCE );
+		int old_distance = LeavesHelper.getDistance( queueState );
 		int distance = 7;
 		
 		for( Direction direction : Direction.values() ) {
 			BlockPos directionPos = pos.offset( direction );
-			distance = Math.min( distance, getDistance( world.getBlockState( directionPos ) ) + 1 );
-			if( distance == 1 ) {
-				break;
+			if( world.isBlockPresent( directionPos ) ) {
+				distance = Math.min( distance, getDistance( world.getBlockState( directionPos ) ) + 1 );
+				if( distance == 1 ) {
+					break;
+				}
 			}
 		}
 		if( old_distance != distance ) {
-			world.setBlockState( pos, state.with( LeavesBlock.DISTANCE, distance ) );
+			world.setBlockState( pos, LeavesHelper.setDistance( world.getBlockState( pos ), distance ) );
 			return true;
 		}
 		return false;
 	}
 	
-	private int getDistance( BlockState neighbor ) {
+	private int getDistance( BlockState state ) {
 		
-		if( BlockTags.LOGS.contains( neighbor.getBlock() ) ) {
+		if( BlockTags.LOGS.contains( state.getBlock() ) ) {
 			return 0;
 		} else {
-			return neighbor.getBlock() instanceof LeavesBlock ? neighbor.get( LeavesBlock.DISTANCE ) : 7;
+			return LeavesHelper.isValidDecayingLeaf( state ) ? LeavesHelper.getDistance( state ) : 7;
 		}
 	}
 }
