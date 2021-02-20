@@ -9,7 +9,7 @@ import net.minecraftforge.fml.network.FMLNetworkConstants;
 import org.apache.commons.lang3.tuple.Pair;
 
 
-@SuppressWarnings( { "unused", "UtilityClassWithPublicConstructor" } )
+@SuppressWarnings( "UtilityClassWithPublicConstructor" )
 @Mod( RapidLeafDecay.MODID )
 public class RapidLeafDecay {
 	
