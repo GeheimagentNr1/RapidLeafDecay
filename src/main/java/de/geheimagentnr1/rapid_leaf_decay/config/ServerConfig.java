@@ -1,16 +1,17 @@
 package de.geheimagentnr1.rapid_leaf_decay.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.ModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-public class MainConfig {
+public class ServerConfig {
 	
 	
 	private static final Logger LOGGER = LogManager.getLogger();
 	
-	private static final String mod_name = "Rapid Leaf Decay";
+	private static final String MOD_NAME = ModLoadingContext.get().getActiveContainer().getModInfo().getDisplayName();
 	
 	private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 	
@@ -28,9 +29,9 @@ public class MainConfig {
 	
 	public static void printConfig() {
 		
-		LOGGER.info( "Loading \"{}\" Config", mod_name );
+		LOGGER.info( "Loading \"{}\" Config", MOD_NAME );
 		LOGGER.info( "{} = {}", DECAY_DELAY.getPath(), DECAY_DELAY.get() );
-		LOGGER.info( "\"{}\" Config loaded", mod_name );
+		LOGGER.info( "\"{}\" Config loaded", MOD_NAME );
 	}
 	
 	public static int getDecayDelay() {

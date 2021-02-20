@@ -3,9 +3,8 @@ package de.geheimagentnr1.rapid_leaf_decay.handlers;
 import de.geheimagentnr1.rapid_leaf_decay.decayer.DecayQueue;
 import de.geheimagentnr1.rapid_leaf_decay.decayer.DecayTask;
 import de.geheimagentnr1.rapid_leaf_decay.decayer.DecayWorker;
+import de.geheimagentnr1.rapid_leaf_decay.helpers.LeavesHelper;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.LeavesBlock;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
@@ -14,8 +13,6 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
-
-import java.util.EnumSet;
 
 
 @SuppressWarnings( "unused" )
@@ -35,14 +32,12 @@ public class ForgeEventHandler {
 		
 		IWorld world = event.getWorld();
 		BlockPos pos = event.getPos();
-		BlockState state = world.getBlockState( pos );
-		if( state.isAir( world, pos ) ) {
-			EnumSet<Direction> directions = event.getNotifiedSides();
-			for( Direction direction : directions ) {
+		if( world.isAirBlock( pos ) ) {
+			for( Direction direction : event.getNotifiedSides() ) {
 				BlockPos directionPos = pos.offset( direction );
 				BlockState directionState = world.getBlockState( directionPos );
-				if( BlockTags.LEAVES.contains( directionState.getBlock() ) &&
-					!directionState.get( LeavesBlock.PERSISTENT ) ) {
+				if( LeavesHelper.isValidDecayingLeaf( directionState ) &&
+					LeavesHelper.isNotPersistent( directionState ) ) {
 					DecayQueue.add( new DecayTask( world.getWorld(), directionState, directionPos ) );
 				}
 			}
