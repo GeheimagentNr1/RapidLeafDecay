@@ -32,10 +32,10 @@ public class ForgeEventHandler {
 		
 		IWorld world = event.getWorld();
 		BlockPos pos = event.getPos();
-		if( world instanceof ServerWorld && world.isAirBlock( pos ) ) {
+		if( world instanceof ServerWorld && world.isEmptyBlock( pos ) ) {
 			ServerWorld serverWorld = (ServerWorld)world;
 			for( Direction direction : event.getNotifiedSides() ) {
-				BlockPos directionPos = pos.offset( direction );
+				BlockPos directionPos = pos.relative( direction );
 				BlockState directionState = world.getBlockState( directionPos );
 				if( LeavesHelper.isValidDecayingLeaf( directionState ) &&
 					LeavesHelper.isNotPersistent( directionState ) ) {

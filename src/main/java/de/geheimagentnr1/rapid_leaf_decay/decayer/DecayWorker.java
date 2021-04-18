@@ -42,7 +42,7 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 			if( LeavesHelper.isValidDecayingLeaf( state ) ) {
 				ServerWorld world = decayTask.getWorld();
 				BlockPos pos = decayTask.getPos();
-				if( world.isBlockPresent( pos ) ) {
+				if( world.isLoaded( pos ) ) {
 					calculateDistances( state, pos, world );
 					world.getBlockState( pos ).randomTick( world, pos, world.getRandom() );
 				}
@@ -69,9 +69,9 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 			
 			for( Direction direction : Direction.values() ) {
 				
-				BlockPos directionPos = toCalculatePos.offset( direction );
+				BlockPos directionPos = toCalculatePos.relative( direction );
 				
-				if( world.isBlockPresent( directionPos ) ) {
+				if( world.isLoaded( directionPos ) ) {
 					
 					BlockState directionState = world.getBlockState( directionPos );
 					
@@ -104,8 +104,8 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 		int distance = 7;
 		
 		for( Direction direction : Direction.values() ) {
-			BlockPos directionPos = pos.offset( direction );
-			if( world.isBlockPresent( directionPos ) ) {
+			BlockPos directionPos = pos.relative( direction );
+			if( world.isLoaded( directionPos ) ) {
 				distance = Math.min( distance, getDistance( world.getBlockState( directionPos ) ) + 1 );
 				if( distance == 1 ) {
 					break;
@@ -113,7 +113,7 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 			}
 		}
 		if( old_distance != distance ) {
-			world.setBlockState( pos, LeavesHelper.setDistance( world.getBlockState( pos ), distance ) );
+			world.setBlockAndUpdate( pos, LeavesHelper.setDistance( world.getBlockState( pos ), distance ) );
 			return true;
 		}
 		return false;
