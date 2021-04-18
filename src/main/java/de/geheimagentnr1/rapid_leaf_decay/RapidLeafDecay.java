@@ -15,6 +15,7 @@ public class RapidLeafDecay {
 	
 	
 	//package-private
+	@SuppressWarnings( "WeakerAccess" )
 	static final String MODID = "rapid_leaf_decay";
 	
 	public RapidLeafDecay() {
