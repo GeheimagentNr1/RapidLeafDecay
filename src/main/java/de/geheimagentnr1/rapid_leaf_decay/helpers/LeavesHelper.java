@@ -10,8 +10,8 @@ public class LeavesHelper {
 	
 	public static boolean isValidDecayingLeaf( BlockState state ) {
 		
-		return ( BlockTags.LEAVES.func_230235_a_( state.getBlock() ) || state.getBlock() instanceof LeavesBlock )
-			&& state.func_235901_b_( LeavesBlock.DISTANCE );
+		return ( BlockTags.LEAVES.func_230235_a_( state.getBlock() ) || state.getBlock() instanceof LeavesBlock ) &&
+			state.func_235901_b_( LeavesBlock.DISTANCE );
 	}
 	
 	public static boolean isNotPersistent( BlockState state ) {
