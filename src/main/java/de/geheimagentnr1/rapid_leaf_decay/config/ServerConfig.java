@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 public class ServerConfig {
 	
 	
-	private static final Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = LogManager.getLogger( ServerConfig.class );
 	
 	private static final String MOD_NAME = ModLoadingContext.get().getActiveContainer().getModInfo().getDisplayName();
 	
