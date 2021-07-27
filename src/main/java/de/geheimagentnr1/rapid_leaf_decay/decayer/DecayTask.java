@@ -1,30 +1,30 @@
 package de.geheimagentnr1.rapid_leaf_decay.decayer;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.state.BlockState;
 
 
 public class DecayTask {
 	
 	
-	private final ServerWorld world;
+	private final ServerLevel level;
 	
 	private final BlockState state;
 	
 	private final BlockPos pos;
 	
-	public DecayTask( ServerWorld _world, BlockState _state, BlockPos _pos ) {
+	public DecayTask( ServerLevel _world, BlockState _state, BlockPos _pos ) {
 		
-		world = _world;
+		level = _world;
 		state = _state;
 		pos = _pos;
 	}
 	
 	//package-private
-	ServerWorld getWorld() {
+	ServerLevel getLevel() {
 		
-		return world;
+		return level;
 	}
 	
 	//package-private

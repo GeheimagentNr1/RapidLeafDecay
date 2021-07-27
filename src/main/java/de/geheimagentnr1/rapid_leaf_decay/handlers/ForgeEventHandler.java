@@ -5,16 +5,16 @@ import de.geheimagentnr1.rapid_leaf_decay.decayer.DecayQueue;
 import de.geheimagentnr1.rapid_leaf_decay.decayer.DecayTask;
 import de.geheimagentnr1.rapid_leaf_decay.decayer.DecayWorker;
 import de.geheimagentnr1.rapid_leaf_decay.helpers.LeavesHelper;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.WorldWorkerManager;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fmlserverevents.FMLServerStartingEvent;
 
 
 @Mod.EventBusSubscriber( modid = RapidLeafDecay.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE )
@@ -31,16 +31,15 @@ public class ForgeEventHandler {
 	@SubscribeEvent
 	public static void handleNeighborNotifyEvent( BlockEvent.NeighborNotifyEvent event ) {
 		
-		IWorld world = event.getWorld();
+		LevelAccessor level = event.getWorld();
 		BlockPos pos = event.getPos();
-		if( world instanceof ServerWorld && world.isEmptyBlock( pos ) ) {
-			ServerWorld serverWorld = (ServerWorld)world;
+		if( level instanceof ServerLevel serverLevel && level.isEmptyBlock( pos ) ) {
 			for( Direction direction : event.getNotifiedSides() ) {
 				BlockPos directionPos = pos.relative( direction );
-				BlockState directionState = world.getBlockState( directionPos );
+				BlockState directionState = level.getBlockState( directionPos );
 				if( LeavesHelper.isValidDecayingLeaf( directionState ) &&
 					LeavesHelper.isNotPersistent( directionState ) ) {
-					DecayQueue.add( new DecayTask( serverWorld, directionState, directionPos ) );
+					DecayQueue.add( new DecayTask( serverLevel, directionState, directionPos ) );
 				}
 			}
 		}

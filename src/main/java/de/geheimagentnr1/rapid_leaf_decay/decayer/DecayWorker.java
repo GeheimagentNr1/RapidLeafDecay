@@ -2,11 +2,11 @@ package de.geheimagentnr1.rapid_leaf_decay.decayer;
 
 import de.geheimagentnr1.rapid_leaf_decay.config.ServerConfig;
 import de.geheimagentnr1.rapid_leaf_decay.helpers.LeavesHelper;
-import net.minecraft.block.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.WorldWorkerManager;
 
 import java.util.ArrayList;
@@ -40,18 +40,18 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 		for( DecayTask decayTask : DecayQueue.getElementsAndReset() ) {
 			BlockState state = decayTask.getState();
 			if( LeavesHelper.isValidDecayingLeaf( state ) ) {
-				ServerWorld world = decayTask.getWorld();
+				ServerLevel level = decayTask.getLevel();
 				BlockPos pos = decayTask.getPos();
-				if( world.isLoaded( pos ) ) {
-					calculateDistances( state, pos, world );
-					world.getBlockState( pos ).randomTick( world, pos, world.getRandom() );
+				if( level.isLoaded( pos ) ) {
+					calculateDistances( state, pos, level );
+					level.getBlockState( pos ).randomTick( level, pos, level.getRandom() );
 				}
 			}
 		}
 		return ServerConfig.getDecayDelay() == 0 && DecayQueue.isNotEmpty();
 	}
 	
-	private void calculateDistances( BlockState start_state, BlockPos start_pos, ServerWorld world ) {
+	private void calculateDistances( BlockState start_state, BlockPos start_pos, ServerLevel level ) {
 		
 		ArrayList<BlockState> toCalculateStates = new ArrayList<>();
 		ArrayList<BlockPos> toCalculatePoses = new ArrayList<>();
@@ -71,9 +71,9 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 				
 				BlockPos directionPos = toCalculatePos.relative( direction );
 				
-				if( world.isLoaded( directionPos ) ) {
+				if( level.isLoaded( directionPos ) ) {
 					
-					BlockState directionState = world.getBlockState( directionPos );
+					BlockState directionState = level.getBlockState( directionPos );
 					
 					if( LeavesHelper.isValidDecayingLeaf( directionState ) &&
 						LeavesHelper.isNotPersistent( directionState ) &&
@@ -85,7 +85,7 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 				}
 			}
 			
-			if( calculateDistance( toCalculateState, toCalculatePos, world ) ) {
+			if( calculateDistance( toCalculateState, toCalculatePos, level ) ) {
 				
 				toCalculateStates.addAll( directionStates );
 				toCalculatePoses.addAll( directionPoses );
@@ -98,22 +98,22 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 		}
 	}
 	
-	private boolean calculateDistance( BlockState queueState, BlockPos pos, ServerWorld world ) {
+	private boolean calculateDistance( BlockState queueState, BlockPos pos, ServerLevel level ) {
 		
 		int old_distance = LeavesHelper.getDistance( queueState );
 		int distance = 7;
 		
 		for( Direction direction : Direction.values() ) {
 			BlockPos directionPos = pos.relative( direction );
-			if( world.isLoaded( directionPos ) ) {
-				distance = Math.min( distance, getDistance( world.getBlockState( directionPos ) ) + 1 );
+			if( level.isLoaded( directionPos ) ) {
+				distance = Math.min( distance, getDistance( level.getBlockState( directionPos ) ) + 1 );
 				if( distance == 1 ) {
 					break;
 				}
 			}
 		}
 		if( old_distance != distance ) {
-			world.setBlockAndUpdate( pos, LeavesHelper.setDistance( world.getBlockState( pos ), distance ) );
+			level.setBlockAndUpdate( pos, LeavesHelper.setDistance( level.getBlockState( pos ), distance ) );
 			return true;
 		}
 		return false;

@@ -1,8 +1,8 @@
 package de.geheimagentnr1.rapid_leaf_decay.helpers;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.LeavesBlock;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.state.BlockState;
 
 
 public class LeavesHelper {

@@ -11,7 +11,7 @@ public class DecayQueue {
 	
 	public static void init() {
 		
-		decayTasks = new TreeSet<>( Comparator.comparing( ( DecayTask o ) -> o.getWorld().dimension() )
+		decayTasks = new TreeSet<>( Comparator.comparing( ( DecayTask o ) -> o.getLevel().dimension() )
 			.thenComparing( DecayTask::getPos ) );
 	}
 	
