@@ -11,10 +11,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.WorldWorkerManager;
+import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fmlserverevents.FMLServerStartingEvent;
 
 
 @Mod.EventBusSubscriber( modid = RapidLeafDecay.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE )
@@ -22,7 +22,7 @@ public class ForgeEventHandler {
 	
 	
 	@SubscribeEvent
-	public static void handlerServerStartingEvent( FMLServerStartingEvent event ) {
+	public static void handlerServerStartingEvent( ServerStartingEvent event ) {
 		
 		DecayQueue.init();
 		WorldWorkerManager.addWorker( new DecayWorker() );
