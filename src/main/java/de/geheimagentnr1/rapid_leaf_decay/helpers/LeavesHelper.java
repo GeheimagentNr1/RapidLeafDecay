@@ -10,7 +10,7 @@ public class LeavesHelper {
 	
 	public static boolean isValidDecayingLeaf( BlockState state ) {
 		
-		return ( BlockTags.LEAVES.contains( state.getBlock() ) || state.getBlock() instanceof LeavesBlock ) &&
+		return ( state.is( BlockTags.LOGS ) || state.getBlock() instanceof LeavesBlock ) &&
 			state.hasProperty( LeavesBlock.DISTANCE );
 	}
 	

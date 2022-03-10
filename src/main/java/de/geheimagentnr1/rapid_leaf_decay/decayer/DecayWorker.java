@@ -121,7 +121,7 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 	
 	private int getDistance( BlockState state ) {
 		
-		if( BlockTags.LOGS.contains( state.getBlock() ) ) {
+		if( state.is( BlockTags.LOGS ) ) {
 			return 0;
 		} else {
 			return LeavesHelper.isValidDecayingLeaf( state ) ? LeavesHelper.getDistance( state ) : 7;
