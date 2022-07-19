@@ -18,12 +18,5 @@ public class RapidLeafDecay {
 	public RapidLeafDecay() {
 		
 		ModLoadingContext.get().registerConfig( ModConfig.Type.SERVER, ServerConfig.CONFIG );
-		ModLoadingContext.get().registerExtensionPoint(
-			IExtensionPoint.DisplayTest.class,
-			() -> new IExtensionPoint.DisplayTest(
-				() -> NetworkConstants.IGNORESERVERONLY,
-				( remote, isServer ) -> true
-			)
-		);
 	}
 }
