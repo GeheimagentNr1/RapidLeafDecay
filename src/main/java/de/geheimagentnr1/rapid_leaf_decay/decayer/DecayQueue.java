@@ -17,7 +17,9 @@ public class DecayQueue {
 	
 	public static void add( DecayTask decayTask ) {
 		
-		decayTasks.add( decayTask );
+		if(decayTasks != null) {
+			decayTasks.add( decayTask );
+		}
 	}
 	
 	//package-private
@@ -31,6 +33,6 @@ public class DecayQueue {
 	//package-private
 	static boolean isNotEmpty() {
 		
-		return !decayTasks.isEmpty();
+		return decayTasks != null && !decayTasks.isEmpty();
 	}
 }
