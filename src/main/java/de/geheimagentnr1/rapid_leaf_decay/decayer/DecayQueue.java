@@ -17,7 +17,7 @@ public class DecayQueue {
 	
 	public static void add( DecayTask decayTask ) {
 		
-		if(decayTasks != null) {
+		if( decayTasks != null ) {
 			decayTasks.add( decayTask );
 		}
 	}
