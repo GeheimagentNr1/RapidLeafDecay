@@ -9,13 +9,13 @@ public class DecayQueue {
 	
 	private static TreeSet<DecayTask> decayTasks;
 	
-	public static void init() {
+	public void init() {
 		
 		decayTasks = new TreeSet<>( Comparator.comparing( ( DecayTask o ) -> o.getLevel().dimension() )
 			.thenComparing( DecayTask::getPos ) );
 	}
 	
-	public static void add( DecayTask decayTask ) {
+	public void add( DecayTask decayTask ) {
 		
 		if( decayTasks != null ) {
 			decayTasks.add( decayTask );
@@ -23,7 +23,7 @@ public class DecayQueue {
 	}
 	
 	//package-private
-	static TreeSet<DecayTask> getElementsAndReset() {
+	TreeSet<DecayTask> getElementsAndReset() {
 		
 		TreeSet<DecayTask> resultDecayTasks = decayTasks;
 		init();
@@ -31,7 +31,7 @@ public class DecayQueue {
 	}
 	
 	//package-private
-	static boolean isNotEmpty() {
+	boolean isNotEmpty() {
 		
 		return decayTasks != null && !decayTasks.isEmpty();
 	}

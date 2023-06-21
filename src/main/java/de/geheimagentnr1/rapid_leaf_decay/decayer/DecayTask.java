@@ -1,41 +1,24 @@
 package de.geheimagentnr1.rapid_leaf_decay.decayer;
 
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 
+@RequiredArgsConstructor
+@Data
 public class DecayTask {
 	
 	
+	@NotNull
 	private final ServerLevel level;
 	
+	@NotNull
 	private final BlockState state;
 	
+	@NotNull
 	private final BlockPos pos;
-	
-	public DecayTask( ServerLevel _world, BlockState _state, BlockPos _pos ) {
-		
-		level = _world;
-		state = _state;
-		pos = _pos;
-	}
-	
-	//package-private
-	ServerLevel getLevel() {
-		
-		return level;
-	}
-	
-	//package-private
-	BlockState getState() {
-		
-		return state;
-	}
-	
-	//package-private
-	BlockPos getPos() {
-		
-		return pos;
-	}
 }

@@ -1,10 +1,12 @@
 package de.geheimagentnr1.rapid_leaf_decay.handlers;
 
-import de.geheimagentnr1.rapid_leaf_decay.RapidLeafDecay;
+import de.geheimagentnr1.minecraft_forge_api.events.ForgeEventHandlerInterface;
+import de.geheimagentnr1.rapid_leaf_decay.config.ServerConfig;
 import de.geheimagentnr1.rapid_leaf_decay.decayer.DecayQueue;
 import de.geheimagentnr1.rapid_leaf_decay.decayer.DecayTask;
 import de.geheimagentnr1.rapid_leaf_decay.decayer.DecayWorker;
 import de.geheimagentnr1.rapid_leaf_decay.helpers.LeavesHelper;
+import lombok.RequiredArgsConstructor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -14,22 +16,30 @@ import net.minecraftforge.common.WorldWorkerManager;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.NotNull;
 
 
-@Mod.EventBusSubscriber( modid = RapidLeafDecay.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE )
-public class ForgeEventHandler {
+@RequiredArgsConstructor
+public class DecayWorkHandler implements ForgeEventHandlerInterface {
 	
+	
+	@NotNull
+	private final ServerConfig serverConfig;
+	
+	@NotNull
+	private final DecayQueue decayQueue = new DecayQueue();
 	
 	@SubscribeEvent
-	public static void handlerServerStartingEvent( ServerStartingEvent event ) {
+	@Override
+	public void handleServerStartingEvent( @NotNull ServerStartingEvent event ) {
 		
-		DecayQueue.init();
-		WorldWorkerManager.addWorker( new DecayWorker() );
+		decayQueue.init();
+		WorldWorkerManager.addWorker( new DecayWorker( serverConfig, decayQueue ) );
 	}
 	
 	@SubscribeEvent
-	public static void handleNeighborNotifyEvent( BlockEvent.NeighborNotifyEvent event ) {
+	@Override
+	public void handleBlockNeighborNotifyEvent( @NotNull BlockEvent.NeighborNotifyEvent event ) {
 		
 		LevelAccessor level = event.getLevel();
 		BlockPos pos = event.getPos();
@@ -39,7 +49,7 @@ public class ForgeEventHandler {
 				BlockState directionState = level.getBlockState( directionPos );
 				if( LeavesHelper.isValidDecayingLeaf( directionState ) &&
 					LeavesHelper.isNotPersistent( directionState ) ) {
-					DecayQueue.add( new DecayTask( serverLevel, directionState, directionPos ) );
+					decayQueue.add( new DecayTask( serverLevel, directionState, directionPos ) );
 				}
 			}
 		}

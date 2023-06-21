@@ -1,41 +1,47 @@
 package de.geheimagentnr1.rapid_leaf_decay.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModLoadingContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import de.geheimagentnr1.minecraft_forge_api.AbstractMod;
+import de.geheimagentnr1.minecraft_forge_api.config.AbstractConfig;
+import net.minecraftforge.fml.config.ModConfig;
+import org.jetbrains.annotations.NotNull;
 
 
-public class ServerConfig {
+public class ServerConfig extends AbstractConfig {
 	
 	
-	private static final Logger LOGGER = LogManager.getLogger( ServerConfig.class );
+	@NotNull
+	private static final String DECAY_DELAY_KEY = "decay_delay";
 	
-	private static final String MOD_NAME = ModLoadingContext.get().getActiveContainer().getModInfo().getDisplayName();
-	
-	private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
-	
-	public static final ForgeConfigSpec CONFIG;
-	
-	private static final ForgeConfigSpec.IntValue DECAY_DELAY;
-	
-	static {
+	public ServerConfig( @NotNull AbstractMod _abstractMod ) {
 		
-		DECAY_DELAY = BUILDER.comment( "Ticks between the leaves decays." )
-			.defineInRange( "decay_delay", 5, 0, Integer.MAX_VALUE );
-		
-		CONFIG = BUILDER.build();
+		super( _abstractMod );
 	}
 	
-	public static void printConfig() {
+	@NotNull
+	@Override
+	public ModConfig.Type type() {
 		
-		LOGGER.info( "Loading \"{}\" Server Config", MOD_NAME );
-		LOGGER.info( "{} = {}", DECAY_DELAY.getPath(), DECAY_DELAY.get() );
-		LOGGER.info( "\"{}\" Server Config loaded", MOD_NAME );
+		return ModConfig.Type.SERVER;
 	}
 	
-	public static int getDecayDelay() {
+	@Override
+	public boolean isEarlyLoad() {
 		
-		return DECAY_DELAY.get();
+		return false;
+	}
+	
+	@Override
+	protected void registerConfigValues() {
+		
+		registerConfigValue(
+			"Ticks between the leaves decays.",
+			DECAY_DELAY_KEY,
+			( builder, path ) -> builder.defineInRange( path, 5, 0, Integer.MAX_VALUE )
+		);
+	}
+	
+	public int getDecayDelay() {
+		
+		return getValue( Integer.class, DECAY_DELAY_KEY );
 	}
 }

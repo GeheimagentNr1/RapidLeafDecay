@@ -1,20 +1,30 @@
 package de.geheimagentnr1.rapid_leaf_decay;
 
+import de.geheimagentnr1.minecraft_forge_api.AbstractMod;
 import de.geheimagentnr1.rapid_leaf_decay.config.ServerConfig;
-import net.minecraftforge.fml.ModLoadingContext;
+import de.geheimagentnr1.rapid_leaf_decay.handlers.DecayWorkHandler;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
+import org.jetbrains.annotations.NotNull;
 
 
-@SuppressWarnings( "UtilityClassWithPublicConstructor" )
 @Mod( RapidLeafDecay.MODID )
-public class RapidLeafDecay {
+public class RapidLeafDecay extends AbstractMod {
 	
 	
-	public static final String MODID = "rapid_leaf_decay";
+	@NotNull
+	static final String MODID = "rapid_leaf_decay";
 	
-	public RapidLeafDecay() {
+	@NotNull
+	@Override
+	public String getModId() {
 		
-		ModLoadingContext.get().registerConfig( ModConfig.Type.SERVER, ServerConfig.CONFIG );
+		return MODID;
+	}
+	
+	@Override
+	protected void initMod() {
+		
+		ServerConfig serverConfig = registerConfig( ServerConfig::new );
+		registerEventHandler( new DecayWorkHandler( serverConfig ) );
 	}
 }
