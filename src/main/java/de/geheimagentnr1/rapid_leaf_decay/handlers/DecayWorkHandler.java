@@ -1,44 +1,35 @@
 package de.geheimagentnr1.rapid_leaf_decay.handlers;
 
-import de.geheimagentnr1.minecraft_forge_api.events.ForgeEventHandlerInterface;
-import de.geheimagentnr1.rapid_leaf_decay.config.ServerConfig;
 import de.geheimagentnr1.rapid_leaf_decay.decayer.DecayQueue;
 import de.geheimagentnr1.rapid_leaf_decay.decayer.DecayTask;
 import de.geheimagentnr1.rapid_leaf_decay.decayer.DecayWorker;
 import de.geheimagentnr1.rapid_leaf_decay.helpers.LeavesHelper;
-import lombok.RequiredArgsConstructor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.WorldWorkerManager;
-import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.neoforge.common.WorldWorkerManager;
 import org.jetbrains.annotations.NotNull;
 
 
-@RequiredArgsConstructor
-public class DecayWorkHandler implements ForgeEventHandlerInterface {
+public class DecayWorkHandler {
 	
-	
-	@NotNull
-	private final ServerConfig serverConfig;
 	
 	@NotNull
 	private final DecayQueue decayQueue = new DecayQueue();
 	
 	@SubscribeEvent
-	@Override
 	public void handleServerStartingEvent( @NotNull ServerStartingEvent event ) {
 		
 		decayQueue.init();
-		WorldWorkerManager.addWorker( new DecayWorker( serverConfig, decayQueue ) );
+		WorldWorkerManager.addWorker( new DecayWorker( decayQueue ) );
 	}
 	
 	@SubscribeEvent
-	@Override
 	public void handleBlockNeighborNotifyEvent( @NotNull BlockEvent.NeighborNotifyEvent event ) {
 		
 		LevelAccessor level = event.getLevel();

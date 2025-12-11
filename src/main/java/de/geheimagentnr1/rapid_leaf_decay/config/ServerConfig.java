@@ -1,47 +1,30 @@
 package de.geheimagentnr1.rapid_leaf_decay.config;
 
-import de.geheimagentnr1.minecraft_forge_api.AbstractMod;
-import de.geheimagentnr1.minecraft_forge_api.config.AbstractConfig;
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.jetbrains.annotations.NotNull;
 
 
-public class ServerConfig extends AbstractConfig {
+public class ServerConfig {
 	
 	
 	@NotNull
-	private static final String DECAY_DELAY_KEY = "decay_delay";
-	
-	public ServerConfig( @NotNull AbstractMod _abstractMod ) {
-		
-		super( _abstractMod );
-	}
+	public static final ModConfigSpec SPEC;
 	
 	@NotNull
-	@Override
-	public ModConfig.Type type() {
+	private static final ModConfigSpec.IntValue DECAY_DELAY;
+	
+	static {
+		ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 		
-		return ModConfig.Type.SERVER;
+		DECAY_DELAY = builder
+			.comment( "Ticks between the leaves decays." )
+			.defineInRange( "decay_delay", 5, 0, Integer.MAX_VALUE );
+		
+		SPEC = builder.build();
 	}
 	
-	@Override
-	public boolean isEarlyLoad() {
+	public static int getDecayDelay() {
 		
-		return false;
-	}
-	
-	@Override
-	protected void registerConfigValues() {
-		
-		registerConfigValue(
-			"Ticks between the leaves decays.",
-			DECAY_DELAY_KEY,
-			( builder, path ) -> builder.defineInRange( path, 5, 0, Integer.MAX_VALUE )
-		);
-	}
-	
-	public int getDecayDelay() {
-		
-		return getValue( Integer.class, DECAY_DELAY_KEY );
+		return DECAY_DELAY.get();
 	}
 }

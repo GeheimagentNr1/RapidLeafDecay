@@ -8,7 +8,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.WorldWorkerManager;
+import net.neoforged.neoforge.common.WorldWorkerManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -18,9 +18,6 @@ import java.util.TreeSet;
 @RequiredArgsConstructor
 public class DecayWorker implements WorldWorkerManager.IWorker {
 	
-	
-	@NotNull
-	private final ServerConfig serverConfig;
 	
 	@NotNull
 	private final DecayQueue decayQueue;
@@ -42,7 +39,7 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 	public boolean doWork() {
 		
 		tickCount++;
-		if( tickCount < serverConfig.getDecayDelay() ) {
+		if( tickCount < ServerConfig.getDecayDelay() ) {
 			return false;
 		}
 		tickCount = 0;
@@ -57,7 +54,7 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 				}
 			}
 		}
-		return serverConfig.getDecayDelay() == 0 && decayQueue.isNotEmpty();
+		return ServerConfig.getDecayDelay() == 0 && decayQueue.isNotEmpty();
 	}
 	
 	private void calculateDistances(
