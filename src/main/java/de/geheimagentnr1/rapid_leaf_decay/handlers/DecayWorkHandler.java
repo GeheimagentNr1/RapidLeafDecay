@@ -12,26 +12,34 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import net.neoforged.neoforge.common.WorldWorkerManager;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.jetbrains.annotations.NotNull;
 
 
 public class DecayWorkHandler {
-	
-	
+
+
 	@NotNull
 	private final DecayQueue decayQueue = new DecayQueue();
-	
+
+	@NotNull
+	private final DecayWorker decayWorker = new DecayWorker( decayQueue );
+
 	@SubscribeEvent
 	public void handleServerStartingEvent( @NotNull ServerStartingEvent event ) {
-		
+
 		decayQueue.init();
-		WorldWorkerManager.addWorker( new DecayWorker( decayQueue ) );
 	}
-	
+
+	@SubscribeEvent
+	public void handleServerTickEvent( @NotNull ServerTickEvent.Post event ) {
+
+		while( decayWorker.doWork() ) {}
+	}
+
 	@SubscribeEvent
 	public void handleBlockNeighborNotifyEvent( @NotNull BlockEvent.NeighborNotifyEvent event ) {
-		
+
 		LevelAccessor level = event.getLevel();
 		BlockPos pos = event.getPos();
 		if( level instanceof ServerLevel serverLevel && level.isEmptyBlock( pos ) ) {

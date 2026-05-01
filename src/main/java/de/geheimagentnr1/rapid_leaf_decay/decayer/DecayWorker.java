@@ -8,7 +8,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.WorldWorkerManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -16,7 +15,7 @@ import java.util.TreeSet;
 
 
 @RequiredArgsConstructor
-public class DecayWorker implements WorldWorkerManager.IWorker {
+public class DecayWorker {
 	
 	
 	@NotNull
@@ -24,18 +23,6 @@ public class DecayWorker implements WorldWorkerManager.IWorker {
 	
 	private int tickCount = 0;
 	
-	@Override
-	public boolean hasWork() {
-		
-		return true;
-	}
-	
-	/**
-	 * Perform a task, returning true from this will have the manager call this function again this tick if there is
-	 * time left.
-	 * Returning false will skip calling this worker until next tick.
-	 */
-	@Override
 	public boolean doWork() {
 		
 		tickCount++;
