@@ -2,13 +2,20 @@
 
 ## Projekt-Übersicht
 
-**Rapid Leaf Decay** ist ein NeoForge Minecraft Mod für Minecraft 1.21.1.
+**Rapid Leaf Decay** ist ein NeoForge Minecraft Mod.
 - **Mod ID**: `rapid_leaf_decay`
 - **Package**: `de.geheimagentnr1.rapid_leaf_decay`
 - **Java Version**: 21
-- **NeoForge Version**: 21.1.x
+- **NeoForge Version**: je Branch, siehe Tabelle
 
 Lässt Blätter schnell zerfallen, nachdem der zugehörige Baumstamm entfernt wurde.
+
+| Branch | MC | Range | NeoForge (kompiliert gegen) | Hinweis |
+|---|---|---|---|---|
+| `develop_1.21.1` | 1.21.1 - 1.21.10 | `[1.21.1,1.21.10]` | `21.1.216` | Release `1.21.1-3.0.1` |
+| `develop_1.21.11` | 1.21.11 | `[1.21.11,1.21.12)` | `21.11.45` | Release `1.21.11-3.0.1` (2026-10-02); keine Java-Änderungen, trivialer GameTest samt Run-Config und CI-Job entfernt, JUnit in `build.gradle` ergänzt |
+
+`develop_1.21.3` ist ein alter, nur lokaler Forge-Stand (`forge_version`) und kein NeoForge-Port.
 
 ## Abhängigkeiten
 
@@ -64,9 +71,13 @@ Verschiedene Java-Versionen sind unter `C:\Program Files\Eclipse Adoptium` insta
 
 ```powershell
 # Java 21 für MC 1.20.5+ (NeoForge)
-$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-21.0.9.10-hotspot"
+$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-21.0.12.8-hotspot"
 ./gradlew build
 ```
+
+### Ingame-Test
+
+Natürlichen Baum fällen (alle Stammblöcke) - Blätter zerfallen in wenigen Sekunden; selbst platzierte (persistente) Blätter und Blätter an einem zweiten Stamm bleiben. Kein Weltzustand gespeichert, ein Neustart-Test ist nicht nötig.
 
 ### Unit Tests (JUnit 5)
 
@@ -80,20 +91,13 @@ Tests liegen unter `src/test/java/`. Ergebnisse: `build/reports/tests/test/index
 
 ### NeoForge GameTest Framework
 
-Für Integration Tests in einer echten Minecraft-Umgebung:
-
-```bash
-./gradlew runGameTestServer
-```
-
-GameTest-Klassen werden mit `@GameTestHolder` annotiert und liegen unter `src/main/java/.../elements/gametests/`.
+Ab `develop_1.21.11` gibt es keine GameTests mehr (trivialer Smoke-Test samt Run-Config und CI-Job entfernt; das annotationsbasierte Framework existiert seit 1.21.5 nicht mehr).
 
 ### CI/CD (GitHub Actions)
 
 Der Workflow `.github/workflows/build-and-test.yml` führt automatisch aus:
 1. **Build**: Kompiliert den Mod
 2. **Unit Tests**: Führt JUnit Tests aus
-3. **GameTests**: Startet GameTestServer (optional)
 
 ### Was kann automatisiert getestet werden?
 
