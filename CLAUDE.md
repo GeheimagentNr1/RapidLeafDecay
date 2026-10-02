@@ -5,7 +5,7 @@
 **Rapid Leaf Decay** ist ein NeoForge Minecraft Mod.
 - **Mod ID**: `rapid_leaf_decay`
 - **Package**: `de.geheimagentnr1.rapid_leaf_decay`
-- **Java Version**: 21
+- **Java Version**: 21 (`develop_26.1`: 25, `jdk-25.0.4.7-hotspot`)
 - **NeoForge Version**: je Branch, siehe Tabelle
 
 Lässt Blätter schnell zerfallen, nachdem der zugehörige Baumstamm entfernt wurde.
@@ -14,6 +14,7 @@ Lässt Blätter schnell zerfallen, nachdem der zugehörige Baumstamm entfernt wu
 |---|---|---|---|---|
 | `develop_1.21.1` | 1.21.1 - 1.21.10 | `[1.21.1,1.21.10]` | `21.1.216` | Release `1.21.1-3.0.1` |
 | `develop_1.21.11` | 1.21.11 | `[1.21.11,1.21.12)` | `21.11.45` | Release `1.21.11-3.0.1` (2026-10-02); keine Java-Änderungen, trivialer GameTest samt Run-Config und CI-Job entfernt, JUnit in `build.gradle` ergänzt |
+| `develop_26.1` | 26.1 - 26.3 | `[26.1,27)` | `26.1.0.19-beta` (Java 25) | Release `26.1-3.0.1` (2026-10-02); aufbauend auf `develop_1.21.11`, nur Tooling (Java 25 / Gradle 9.2.1 / moddev 2.0.147 / Lombok 1.18.48); Bytecode identisch für 26.1 - 26.3, ingame getestet auf 26.1 und 26.3 |
 
 `develop_1.21.3` ist ein alter, nur lokaler Forge-Stand (`forge_version`) und kein NeoForge-Port.
 
