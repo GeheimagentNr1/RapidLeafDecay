@@ -1,120 +1,51 @@
 # CLAUDE.md - Rapid Leaf Decay
 
-## Projekt-Übersicht
+Rapid Leaf Decay lässt Blätter innerhalb weniger Sekunden zerfallen, sobald ihr Baumstamm entfernt wurde (statt über Vanilla-Random-Ticks). Mod-ID `rapid_leaf_decay`, Package `de.geheimagentnr1.rapid_leaf_decay`. Client+Server ohne Dist-Beschränkung (`@Mod( MODID )`); die Logik läuft nur auf dem (auch integrierten) Server, es gibt keine Registrierungen und keine Netzwerkpakete.
 
-**Rapid Leaf Decay** ist ein NeoForge Minecraft Mod.
-- **Mod ID**: `rapid_leaf_decay`
-- **Package**: `de.geheimagentnr1.rapid_leaf_decay`
-- **Java Version**: 21
-- **NeoForge Version**: je Branch, siehe Tabelle
+> Diese Datei ist auf allen `develop_*`-Branches identisch; Quelle: `../Docs/mod-claude/RapidLeafDecay.md` (Änderungen dort, dann `Docs/tools/sync_mod_claude_md.sh`). Versionsstand: [`../Docs/VERSIONEN.md`](../Docs/VERSIONEN.md).
 
-Lässt Blätter schnell zerfallen, nachdem der zugehörige Baumstamm entfernt wurde.
+## Versionen
 
-| Branch | MC | Range | NeoForge (kompiliert gegen) | Hinweis |
-|---|---|---|---|---|
-| `develop_1.21.1` | 1.21.1 - 1.21.10 | `[1.21.1,1.21.10]` | `21.1.216` | Release `1.21.1-3.0.1` |
-| `develop_1.21.11` | 1.21.11 | `[1.21.11,1.21.12)` | `21.11.45` | Release `1.21.11-3.0.1` (2026-10-02); keine Java-Änderungen, trivialer GameTest samt Run-Config und CI-Job entfernt, JUnit in `build.gradle` ergänzt |
-
-`develop_1.21.3` ist ein alter, nur lokaler Forge-Stand (`forge_version`) und kein NeoForge-Port.
+- Branches, Ranges und Tags: Zeile „RapidLeafDecay“ in [`../Docs/VERSIONEN.md`](../Docs/VERSIONEN.md).
+- NeoForge: `develop_1.21.1` (ein Jar 1.21.1 - 1.21.10), `develop_1.21.11`, `develop_26.1` (ein Jar 26.1 - 26.3). Forge: `develop_<mc>` bis 1.21.3 und `develop_1.21.1_forge`.
+- Der Java-Code ist auf allen NeoForge-Branches gleich; 1.21.11 und 26.x unterscheiden sich nur in Tooling/NeoForge-Version und im entfernten GameTest.
 
 ## Abhängigkeiten
 
-Keine Mod-Abhängigkeiten - eigenständiger Mod.
+- Keine Mod-Abhängigkeiten, keine gebündelten Bibliotheken.
+- Forge ab 1.20: MinecraftForgeAPI (JarInJar, siehe [`../Docs/forge/README.md`](../Docs/forge/README.md)).
 
-## Projektstruktur
+## Architektur
 
-```
-src/main/java/de/geheimagentnr1/rapid_leaf_decay/
-├── RapidLeafDecay.java          # Haupt-Mod-Klasse
-├── config/
-│   └── ServerConfig.java        # Server-Konfiguration
-├── decayer/
-│   ├── DecayQueue.java          # Queue für Decay-Tasks
-│   ├── DecayTask.java           # Einzelner Decay-Task
-│   └── DecayWorker.java         # Worker für Decay-Verarbeitung
-├── handlers/
-│   └── DecayWorkHandler.java    # Event-Handler für Decay
-└── helpers/
-    └── LeavesHelper.java        # Helper für Blätter-Erkennung
-```
+- `RapidLeafDecay` - Hauptklasse: registriert `ServerConfig.SPEC` (Typ SERVER) und `DecayWorkHandler` auf dem NeoForge-Bus.
+- `handlers/DecayWorkHandler` - `BlockEvent.NeighborNotifyEvent`: wird ein Block leer, kommen benachbarte, nicht persistente Blätter als `DecayTask` in die `DecayQueue`; `ServerTickEvent.Post` treibt den `DecayWorker`; `ServerStartingEvent` initialisiert die Queue.
+- `decayer/DecayQueue` - `TreeSet` nach Dimension und Position (keine Duplikate), wird pro Durchlauf geleert.
+- `decayer/DecayWorker` - alle `decay_delay` Ticks: berechnet die Blatt-Distanzen neu (Flood-Fill über verbundene Blätter) und löst einen `randomTick` aus, der das Blatt bei Distanz 7 zerfallen lässt. Läuft synchron im Server-Tick, nicht asynchron.
+- `helpers/LeavesHelper` - erkennt Blätter (alles mit `LeavesBlock.DISTANCE`, auch Stämme mit dieser Eigenschaft) und prüft `PERSISTENT`.
+- Forge-Branches: `DecayWorker` ist ein `WorldWorkerManager.IWorker` (ab 1.20 mit `AbstractMod` aus MinecraftForgeAPI, bis 1.19.4 statische `handlers/ModEventHandler`/`ForgeEventHandler`). NeoForge nutzt `ServerTickEvent.Post`, weil `WorldWorkerManager.IWorker` später entfällt.
 
-## Besonderheiten
+## Funktionen, Befehle, Konfiguration
 
-- **Queue-basiertes System**: Blätter werden in einer Queue verarbeitet
-- **Worker-Pattern**: DecayWorker verarbeitet Tasks asynchron
-- **Konfigurierbar**: Decay-Geschwindigkeit über ServerConfig einstellbar
+- Keine Befehle, keine Items/Blöcke.
+- Server-Config (im `serverconfig/`-Ordner der Welt): `decay_delay` = Ticks zwischen zwei Zerfallsdurchläufen (Standard 5, `0` = so lange in einem Tick, bis die Queue leer ist).
+- Kein gespeicherter Weltzustand; die Queue lebt nur im Speicher.
 
-## Code-Stil
+## Fallstricke
 
-- **Annotations**: `@NotNull` aus `org.jetbrains.annotations`
-- **Lombok**: Projekt nutzt Lombok
-- **Formatierung**: Leerzeichen nach `(` und vor `)` bei Methodenaufrufen
+- Selbst platzierte Blätter (`persistent=true`) dürfen nie zerfallen - jede Änderung an `LeavesHelper` daraufhin prüfen.
+- `NeighborNotifyEvent` feuert sehr oft; im Handler nur billige Prüfungen, die Arbeit gehört in den Worker.
+- 1.21.11+ keine GameTests mehr (annotationsbasiertes Framework seit 1.21.5 weg, der triviale Test wurde entfernt).
+- Forge 1.20.1: der Dedicated-Server-Absturz ab Forge 47.4.16 (`MultiPlayerGameMode` … `invalid dist`, GH#5) lag an MinecraftForgeAPI und ist mit MFAPI 1.0.2 behoben ([`../Docs/forge/README.md`](../Docs/forge/README.md)).
 
-## Build & Test
+## Testen
 
-```bash
-./gradlew build
-./gradlew runClient
-./gradlew runServer
-```
+- Allgemeines Vorgehen: [`../Docs/testing/README.md`](../Docs/testing/README.md); Jar in Server-Testpack und Client-Instanz.
+- Ingame: natürlichen Baum komplett fällen (alle Stammblöcke) - Blätter zerfallen in wenigen Sekunden; selbst platzierte Blätter und Blätter, die noch an einem zweiten Stamm hängen, bleiben. Kein Neustart-Test nötig (kein Weltzustand).
+- Server-Smoke über alle Packs: [`../Docs/testing/tools/neoforge_smoke_all.sh`](../Docs/testing/tools/neoforge_smoke_all.sh). CI: Build + JUnit.
 
-## Deployment
+## Links
 
-- **CurseForge**: `./gradlew curseforge`
-- **Modrinth**: `./gradlew modrinth`
-
-## Testing
-
-### Java-Versionen
-
-Verschiedene Java-Versionen sind unter `C:\Program Files\Eclipse Adoptium` installiert. Für einen Gradle-Build muss die passende Java-Version gewählt werden:
-
-```powershell
-# Java 21 für MC 1.20.5+ (NeoForge)
-$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-21.0.12.8-hotspot"
-./gradlew build
-```
-
-### Ingame-Test
-
-Natürlichen Baum fällen (alle Stammblöcke) - Blätter zerfallen in wenigen Sekunden; selbst platzierte (persistente) Blätter und Blätter an einem zweiten Stamm bleiben. Kein Weltzustand gespeichert, ein Neustart-Test ist nicht nötig.
-
-### Unit Tests (JUnit 5)
-
-Für reine Logik-Tests ohne Minecraft-Abhängigkeiten:
-
-```bash
-./gradlew test
-```
-
-Tests liegen unter `src/test/java/`. Ergebnisse: `build/reports/tests/test/index.html`
-
-### NeoForge GameTest Framework
-
-Ab `develop_1.21.11` gibt es keine GameTests mehr (trivialer Smoke-Test samt Run-Config und CI-Job entfernt; das annotationsbasierte Framework existiert seit 1.21.5 nicht mehr).
-
-### CI/CD (GitHub Actions)
-
-Der Workflow `.github/workflows/build-and-test.yml` führt automatisch aus:
-1. **Build**: Kompiliert den Mod
-2. **Unit Tests**: Führt JUnit Tests aus
-
-### Was kann automatisiert getestet werden?
-
-| Aspekt | Automatisiert? | Methode |
-|--------|----------------|---------|
-| Utility-Klassen | ✅ | JUnit |
-| Config-Parsing | ✅ | JUnit |
-| Commands | ✅ | GameTest |
-| Block/Item-Verhalten | ✅ | GameTest |
-| Multi-MC-Version | ⚠️ Pro Branch | CI Matrix |
-
-## Referenzen
-
-- [NeoForge Migration Primer](https://docs.neoforged.net/primer/docs/) — Dokumentiert API-Aenderungen zwischen Minecraft/NeoForge-Versionen; nuetzlich fuer die Pruefung von Breaking Changes beim Upgrade auf neue Versionen
-
----
-
-## Wissensdatenbank
-
-Versionsübergreifende Migrations- und Entwicklungs-Erkenntnisse (Breaking Changes, Fixes, Testumgebungs-Patterns) werden zentral in [`../Docs/`](../Docs/) gepflegt. Bei neuen relevanten Erkenntnissen dort ergänzen, nicht nur hier.
+- Wiki: https://github.com/GeheimagentNr1/RapidLeafDecay/wiki
+- CurseForge: https://www.curseforge.com/minecraft/mc-mods/rapid-leaf-decay (Projekt-ID 396847)
+- Modrinth: https://modrinth.com/mod/jSQXzmcf
+- [`../Docs/migrations/BREAKING_CHANGES.md`](../Docs/migrations/BREAKING_CHANGES.md), [`../Docs/releasing/release-process.md`](../Docs/releasing/release-process.md)
