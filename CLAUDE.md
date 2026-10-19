@@ -7,7 +7,7 @@ Rapid Leaf Decay lässt Blätter innerhalb weniger Sekunden zerfallen, sobald ih
 ## Versionen
 
 - Branches, Ranges und Tags: Zeile „RapidLeafDecay“ in [`../Docs/VERSIONEN.md`](../Docs/VERSIONEN.md).
-- NeoForge: `develop_1.21.1` (ein Jar 1.21.1 - 1.21.10), `develop_1.21.11`, `develop_26.1` (ein Jar 26.1 - 26.3). Forge: `develop_<mc>` bis 1.21.3 und `develop_1.21.1_forge`.
+- NeoForge: `develop_1.21.1` (ein Jar 1.21.1 - 1.21.10), `develop_1.21.11`, `develop_26.1` (26.1 - 26.2), `develop_26.3` (ab NeoForge 26.3.0.37-beta: Config-Typ `SYNCED` statt `SERVER` mit altem Dateinamen `<modid>-server.toml`, alte `world/serverconfig/`-Datei wird auf Dedicated Servern einmalig nach `world/syncedconfig/` kopiert - `config/ServerConfigRegistration`, `config/LegacyServerConfigMigration`, 2026-10-19). Forge: `develop_<mc>` bis 1.21.3 und `develop_1.21.1_forge`.
 - Der Java-Code ist auf allen NeoForge-Branches gleich; 1.21.11 und 26.x unterscheiden sich nur in Tooling/NeoForge-Version und im entfernten GameTest.
 
 ## Abhängigkeiten
