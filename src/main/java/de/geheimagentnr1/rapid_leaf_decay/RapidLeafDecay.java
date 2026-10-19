@@ -1,11 +1,11 @@
 package de.geheimagentnr1.rapid_leaf_decay;
 
+import de.geheimagentnr1.rapid_leaf_decay.config.ServerConfigRegistration;
 import de.geheimagentnr1.rapid_leaf_decay.config.ServerConfig;
 import de.geheimagentnr1.rapid_leaf_decay.handlers.DecayWorkHandler;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +19,7 @@ public class RapidLeafDecay {
 	
 	public RapidLeafDecay( IEventBus modEventBus, ModContainer modContainer ) {
 		
-		modContainer.registerConfig( ModConfig.Type.SERVER, ServerConfig.SPEC );
+		ServerConfigRegistration.register( modContainer, ServerConfig.SPEC );
 		NeoForge.EVENT_BUS.register( new DecayWorkHandler() );
 	}
 }
